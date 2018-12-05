@@ -34,6 +34,8 @@ Assignment::Assignment(string text,string li):t(text),origin(li){}
 
 int Assignment::execute(EvalState & state){
    TokenScanner scanner;
+   scanner.ignoreWhitespace();
+   scanner.scanNumbers();
    scanner.setInput(t);
    try{
       parseExp(scanner)->eval(state);
@@ -49,6 +51,8 @@ Print::Print(string text,string li):t(text),origin(li){}
 
 Print::execute(EvalState & state){
    TokenScanner scanner;
+   scanner.ignoreWhitespace();
+   scanner.scanNumbers();
    scanner.setInput(t);
    try{
       printf("%d\n",parseExp(scanner)->eval(state));
@@ -63,6 +67,8 @@ Input::Input(string text,string li):t(text),origin(li){}
 int Input::execute(EvalState & state){
    TokenScanner scanner;
    int temp;string name;
+   scanner.ignoreWhitespace();
+   scanner.scanNumbers();
    scanner.setInput(t);
    printf("%d\n");
    scanf("%d",&temp);

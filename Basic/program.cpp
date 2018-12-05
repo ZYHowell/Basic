@@ -11,7 +11,10 @@
 #include <string>
 #include "program.h"
 #include "statement.h"
+#include "parser.h"
 #include "../StanfordCPPLib/error.h"
+#include "../StanfordCPPLib/tokenscanner.h"
+
 using namespace std;
 
 Program::Program() {
@@ -24,7 +27,31 @@ Program::~Program() {
    }
 }
 
-void Program::addSourceLine(int lineNumber, string line, string li,const string &order){
+bool correctLine(string line){
+   TokenScanner scanner;
+   scanner.ignoreWhitespace();
+   scanner.scanNumbers();
+   scanner.setInput(l);
+   string temp = scanner.nextToken();
+   if (temp == "REM") return true;
+   if (temp == "LET"){
+      parseExp(scanner);
+      return true;
+   }
+   if ((temp == "INPUT")||(temp == "PRINT")||){
+      temp = scanner.nextToken();
+      if (temp[0]>='0' && (temp[0]<='9')) return false;
+      for (auto i : temp)
+         if ( !( (i >= '0'&& i <= '9') || (i >= 'a' && i<= 'z') || 
+         (i >= 'A' && i <= 'Z') || (i != '_')) ) return false;
+      return !scanner.hasMoreTokens();
+   }
+   if (temp == "END")
+      return !scanner.hasMoreTokens();
+}
+
+void Program::addSourceLine(int lineNumber, string line, string li){
+   if (!correctLine(line)) error("SYNTAX ERROR");
    if (map.count(lineNumber)) map.erase(lineNumber); 
    if (order == "REM")
          map[lineNumber] = new Comment(line,li);
@@ -36,7 +63,6 @@ void Program::addSourceLine(int lineNumber, string line, string li,const string 
          map[lineNumber] = new Input(line,li);
    else if (order == "END")
          map[lineNumber] = new Halt(line,li);
-   else error("SYNTAX ERROR");
    }
 }
 

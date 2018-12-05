@@ -60,7 +60,7 @@ void processLine(string line, Program & program, EvalState & state) {
    scanner.setInput(line);
    string li = line;
    string temp = scanner.nextToken();
-   if ((line[0] >= '0')&&(line[0] <= '9')){
+   if ((temp[0] >= '0')&&(temp[0] <= '9')){
       try{
          int ln = stringToInteger(temp);
          if (!scanner.hasMoreTokens()) error("SYNTAX ERROR");
@@ -70,7 +70,7 @@ void processLine(string line, Program & program, EvalState & state) {
             temp = scanner.nextToken();
             line = line + ' ' + temp;
          }
-         program.addSourceLine(ln , line , li , temp);
+         program.addSourceLine(ln , line , li);
       }catch (ErrorException & ex){
          error(ex.getMessage());
       }

@@ -67,7 +67,7 @@ public:
  * program in the correct sequence.
  */
 
-  void addSourceLine(int lineNumber, std::string line, std::string li,const std::string & order);
+  void addSourceLine(int lineNumber, std::string line, std::string li);
   /*
  * Method: removeSourceLine
  * Usage: program.removeSourceLine(lineNumber);
