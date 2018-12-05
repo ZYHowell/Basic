@@ -25,7 +25,7 @@ Statement::~Statement() {
 Comment::Comment(string text,string li):t(text),origin(li){}
 
 int Comment::execute(EvalState & state){
-   return;
+   return 0;
 }
 
 Comment::~Comment(){}
@@ -49,7 +49,7 @@ Assignment::~Assignment(){}
 
 Print::Print(string text,string li):t(text),origin(li){}
 
-Print::execute(EvalState & state){
+int Print::execute(EvalState & state){
    TokenScanner scanner;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
@@ -59,6 +59,7 @@ Print::execute(EvalState & state){
    } catch (ErrorException & ex){
       error(ex.getMessage());
    }
+   return 0;
 }
 Print::~Print(){}
 
@@ -70,12 +71,20 @@ int Input::execute(EvalState & state){
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
    scanner.setInput(t);
-   printf("%d\n");
-   scanf("%d",&temp);
+   printf(" ? ");
+   string tt;bool redo = true;
+   while (redo)
+      try{
+         scanf("%s",tt);
+         temp = stringToInteger(tt);
+         redo = false;
+      } catch(ErrorException & ex){
+         printf("INVALID NUMBER\n");
+         redo = true;
+      }
+   scanner.nextToken();
    name = scanner.nextToken();
-   judgeIt(name);
-   if (scanner.hasMoreTokens()) error("Uncorrect variance");
-   state.setValue(t,temp);
+   state.setValue(name,temp);
    return 0;
 }
 
@@ -84,7 +93,24 @@ Input::~Input(){}
 Halt::Halt(string text,string li):t(text),origin(li){}
 
 int Halt::execute(EvalState & state){
-   return 1;
+   return -1;
 }
 
 Halt::~Halt(){}
+
+Goto::Goto(string text,string li):t(text),origin(li){}
+
+int Goto::execute(EvalState & state){
+   return waitingtofill
+}
+
+Goto::~Goto(){}
+
+Judge::Judge(string text,string li):t(text),origin(li){}
+
+int Judge::execute(EvalState & state){
+   waitingtofill
+   return 0;
+}
+
+Judge::~Judge(){}

@@ -33,8 +33,15 @@ int main() {
    while (true) {
       try {
          processLine(getLine(), program, state);
-      } catch (ErrorException & ex) {
-         cerr <<  ex.getMessage() << endl;
+      }
+      catch (ErrorException & ex) {
+         string temp = ex.getMessage();
+         if (temp.c_str(),"stringToInteger") == NULL)
+            if ((temp == "DIVIDE BY ZERO")||(temp == "INVALID NUMBER")||
+               (temp == "VARIABLE NOT DEFINED")||(temp == "LINE NUMBER ERROR"))
+               cerr <<  temp << endl;
+            else cerr << "SYNTAX ERROR" << endl;
+         else cerr << endl;
       }
    }
    return 0;
@@ -55,6 +62,7 @@ int main() {
 
 void processLine(string line, Program & program, EvalState & state) {
    TokenScanner scanner;
+   int ln;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
    scanner.setInput(line);
@@ -62,7 +70,11 @@ void processLine(string line, Program & program, EvalState & state) {
    string temp = scanner.nextToken();
    if ((temp[0] >= '0')&&(temp[0] <= '9')){
       try{
-         int ln = stringToInteger(temp);
+         ln = stringToInteger(temp);
+      } catch (ErrorException & ex){
+         error("SYNTAX ERROR");
+      }
+      try{
          if (!scanner.hasMoreTokens()) error("SYNTAX ERROR");
          temp = scanner.nextToken();
          line = temp;
@@ -89,12 +101,10 @@ void processLine(string line, Program & program, EvalState & state) {
          exit(0);
       else if (temp == "HELP")
          printf("Believe in yourself\n");
-      else error("SYNTAX ERROR")
+      else error("SYNTAX ERROR");
             /*Expression *exp = parseExp(scanner);
             int value = exp->eval(state);
             cout << value << endl;
             delete exp;*/
       }
-   }
-   
 }

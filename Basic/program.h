@@ -9,6 +9,7 @@
 #define _program_h
 
 #include <string>
+#include <map>
 #include "statement.h"
 using namespace std;
 
@@ -140,7 +141,6 @@ public:
 
 private:
   map<int , Statement*> s;
-  // Fill this in with whatever types and instance variables you need
 };
-
+bool correctName(std::string nam);
 #endif

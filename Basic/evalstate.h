@@ -76,9 +76,7 @@ public:
    void clear();
 private:
 
-   map<std::string,int> symbolTable;
+   std::map<std::string,int> symbolTable;
 
 };
-
-bool judgeIt(std::string nam);
 #endif

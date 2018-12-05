@@ -9,11 +9,13 @@
  */
 
 #include <string>
-#include "program.h"
-#include "statement.h"
+#include "exp.h"
 #include "parser.h"
+#include "statement.h"
+#include "program.h"
 #include "../StanfordCPPLib/error.h"
 #include "../StanfordCPPLib/tokenscanner.h"
+#include "../StanfordCPPLib/strlib.h"
 
 using namespace std;
 
@@ -31,38 +33,46 @@ bool correctLine(string line){
    TokenScanner scanner;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
-   scanner.setInput(l);
+   scanner.setInput(line);
    string temp = scanner.nextToken();
    if (temp == "REM") return true;
    if (temp == "LET"){
-      parseExp(scanner);
+      CompoundExp *tempexp = parseExp(scanner);
+      judgeExp(temp)
       return true;
    }
    if ((temp == "INPUT")||(temp == "PRINT")||){
-      temp = scanner.nextToken();
-      if (temp[0]>='0' && (temp[0]<='9')) return false;
-      for (auto i : temp)
-         if ( !( (i >= '0'&& i <= '9') || (i >= 'a' && i<= 'z') || 
-         (i >= 'A' && i <= 'Z') || (i != '_')) ) return false;
-      return !scanner.hasMoreTokens();
+      
    }
    if (temp == "END")
       return !scanner.hasMoreTokens();
+   if (temp == "GOTO"){
+      temp = scanner.nextToken();
+      if (stringToInteger(temp) <= 0) error("SYNTAX ERROR");
+      return scanner.hasMoreTokens();
+   }
+   if (temp == "IF"){
+
+   }
 }
 
 void Program::addSourceLine(int lineNumber, string line, string li){
    if (!correctLine(line)) error("SYNTAX ERROR");
-   if (map.count(lineNumber)) map.erase(lineNumber); 
+   if (s.count(lineNumber)) s.erase(lineNumber); 
    if (order == "REM")
-         map[lineNumber] = new Comment(line,li);
+      s[lineNumber] = new Comment(line,li);
    else if (order == "LET")
-         map[lineNumber] = new Assignment(line,li);
+      s[lineNumber] = new Assignment(line,li);
    else if (order == "PRINT")
-         map[lineNumber] = new Print(line,li);
+      s[lineNumber] = new Print(line,li);
    else if (order == "INPUT")
-         map[lineNumber] = new Input(line,li);
+      s[lineNumber] = new Input(line,li);
    else if (order == "END")
-         map[lineNumber] = new Halt(line,li);
+      s[lineNumber] = new Halt(line,li);
+   else if (order == "GOTO")
+      s[lineNumber] = new Goto(line,li);
+   else if (order == "IF")
+      s[lineNumber] = new Judge(line,li);
    }
 }
 
@@ -84,9 +94,7 @@ Statement *Program::getParsedStatement(int lineNumber) {
 }
 
 int Program::getFirstLineNumber() {
-   map<int, Statement*>::iterator iter = s.begin();
-   return iter->first;
-   return 0;
+   return s.begin()->first;
 }
 
 int Program::getNextLineNumber(int lineNumber) {
@@ -94,7 +102,6 @@ int Program::getNextLineNumber(int lineNumber) {
    if (iter == s.end()) return 0;
    iter++;
    return iter->first;
-   return 0;
 }
 
 void Program::clear() {
@@ -105,7 +112,7 @@ void Program::clear() {
 
 void Program::list(){
    for (auto i : s){
-      printf("%d %s\n",i.first,i.second->origin);
+      printf("%s\n",i.second->origin);
    }
 }
 
@@ -113,10 +120,20 @@ void Program::run(EvalState & state){
    int temp;
    map<int, Statement*>::iterator iter = s.begin();
    while (iter != s.end()){
-   temp = i.second->execute();
-   if (temp == 0) iter++;
-   else if (temp == 1) break;
-   else iter = 
+      temp = i.second->execute();
+      if (temp == 0) iter++;
+      else if (temp == -1) break;
+      else iter = s.find(temp);
    }
-   }
+}
+
+bool correctName(string nam){
+   if (nam[i] >= '0' && nam[i] <= '9') return false;
+   for (auto i : nam)
+   if ( !( (i >= '0'&& i <= '9') || (i >= 'a' && i<= 'z') || 
+         (i >= 'A' && i <= 'Z') ) ) return false;
+   return ((nam == "RUN") || (nam == "LIST") || (nam == "CLEAR") ||
+   (nam == "QUIT") || (nam == "HELP") || (nam == "LET") || (nam == "REM") || 
+   (nam == "PRINT") || (nam == "INPUT") || (nam == "END") || (nam == "IF") ||
+   (nam == "THEN") || (nam == "GOTO"));
 }

@@ -23,8 +23,7 @@ EvalState::~EvalState() {
 }
 
 void EvalState::setValue(string var, int value) {
-   if (!symbolTable.isDefined(var)) error("VARIABLE NOT DEFINED");
-   symbolTable[var] = value);
+   symbolTable[var] = value;
 }
 
 int EvalState::getValue(string var) {
@@ -41,9 +40,3 @@ void EvalState::clear(){
    }
 }
 
-bool judgeIt(string nam){
-   return ((nam == "RUN") || (nam == "LIST") || (nam == "CLEAR") ||
-   (nam == "QUIT") || (nam == "HELP") || (nam == "LET") || (nam == "REM") || 
-   (nam == "PRINT") || (nam == "INPUT") || (nam == "END") || (nam == "IF") ||
-   (nam == "THEN") || (nam == "GOTO"));
-}

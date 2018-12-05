@@ -36,8 +36,8 @@ public:
  * its own constructor.
  */
 
-   Statement() = default;
-   virtual Statement(string text,string li);
+  Statement() = default;
+  Statement(std::string text,std::string li);
 
 /*
  * Destructor: ~Statement
@@ -61,7 +61,7 @@ public:
  * controlling the operation of the interpreter.
  */
 
-   virtual void execute(EvalState & state) = 0;
+   virtual int execute(EvalState & state) = 0;
 
 public:
   std::string t; 
@@ -79,28 +79,39 @@ public:
  * specify its own destructor method to free that memory.
  */
 class Comment: public Statement{
-  virtual Comment(string text,string li);
-  virtual void execute(EvalState & state);
+  Comment(std::string text,std::string li);
+  virtual int execute(EvalState & state);
   virtual ~Comment();
 };
 class Assignment: public Statement{
-  virtual Assignment(string text,string li);
-  virtual void execute(EvalState & state);
+  Assignment(std::string text,std::string li);
+  virtual int execute(EvalState & state);
   virtual ~Assignment();
 };
-class Print: public Stetement{
-  virtual Print(string text,string li);
-  virtual void execute(EvalState & state);
+class Print: public Statement{
+  Print(std::string text,std::string li);
+  virtual int execute(EvalState & state);
   virtual ~Print();
 };
-class Input: public Stetement{
-  virtual Input(string text,string li);
-  virtual void execute(EvalState & state);
+class Input: public Statement{
+  Input(std::string text,std::string li);
+  virtual int execute(EvalState & state);
   virtual ~Input();
 };
-class Halt: public Stetement{
-  virtual Halt(string text,string li);
-  virtual void execute(EvalState & state);
+class Halt: public Statement{
+  Halt(std::string text,std::string li);
+  virtual int execute(EvalState & state);
   virtual ~Halt();
 };
+class Goto: public Statement{
+  Goto(std::string text,std::string li);
+  virtual int execute(EvalState & state);
+  virtual ~Goto();
+};
+class Judge: public Statement{
+  Judge(std::string text,std::string li);
+  virtual int execute(EvalState & state);
+  virtual ~Judge();
+};
+
 #endif
