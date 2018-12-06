@@ -35,8 +35,6 @@ bool EvalState::isDefined(string var) {
 }
 
 void EvalState::clear() {
-	for (auto i : symbolTable) {
-		symbolTable.erase(i.first);
-	}
+	symbolTable.clear();
 }
 

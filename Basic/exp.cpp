@@ -115,7 +115,7 @@ CompoundExp::~CompoundExp() {
 int CompoundExp::eval(EvalState & state) {
 	if (op == "=") {
 		if (lhs->getType() != IDENTIFIER) {
-			error("SYNTAX ERROR");
+			error("SYNTAX ERROR3");
 		}
 		int val = rhs->eval(state);
 		state.setValue(((IdentifierExp *)lhs)->getName(), val);
@@ -136,7 +136,7 @@ int CompoundExp::eval(EvalState & state) {
 	if (op == "/")
 		if (right == 0) error("DIVIDE BY ZERO");
 		else return left / right;
-	error("SYNTAX ERROR");
+	error("SYNTAX ERROR4");
 	return 0;
 }
 

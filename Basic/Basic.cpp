@@ -60,6 +60,7 @@ int main() {
 
 void processLine(string line, Program & program, EvalState & state) {
 	TokenScanner scanner;
+	Program tempprogram;
 	int ln;
 	scanner.ignoreWhitespace();
 	scanner.scanNumbers();
@@ -68,7 +69,10 @@ void processLine(string line, Program & program, EvalState & state) {
 	if (scanner.getTokenType(temp) == NUMBER) {
 		ln = stringToInteger(temp);
 		try {
-			if (!scanner.hasMoreTokens()) error("SYNTAX ERROR");
+			if (!scanner.hasMoreTokens()) {
+				program.removeSourceLine(ln);
+				return;
+			}
 			program.addSourceLine(ln, line);
 		}
 		catch (ErrorException & ex) {
@@ -76,23 +80,23 @@ void processLine(string line, Program & program, EvalState & state) {
 		}
 	}
 	else {
-		if (temp == "RUN") {
-			state.clear();
+		if (temp == "RUN")
 			program.run(state);
-			state.clear();
-		}
 		else if (temp == "LIST")
 			program.list();
-		else if (temp == "CLEAR")
+		else if (temp == "CLEAR") {
 			program.clear();
+			state.clear();
+		}
 		else if (temp == "QUIT")
 			exit(0);
 		else if (temp == "HELP")
 			printf("Believe in yourself\n");
-		else error("SYNTAX ERROR");
-		/*Expression *exp = parseExp(scanner);
-		int value = exp->eval(state);
-		cout << value << endl;
-		delete exp;*/
+		else if ((temp == "LET")|| (temp == "PRINT")|| (temp == "INPUT")) {
+			tempprogram.addSourceLine(0, "0 " + line);
+			tempprogram.run(state);
+			tempprogram.clear();
+		}
+		else error("SYNTAX ERROR2");
 	}
 }

@@ -71,10 +71,10 @@ Input::Input(string text, string li) :Statement(text, li) {}
 int Input::execute(EvalState & state) {
 	TokenScanner scanner;
 	int temp;
-	printf(" ? ");
 	string tt;bool redo = true;
 	while (redo)
 		try {
+		printf(" ? ");
 		cin>>tt;
 		temp = stringToInteger(tt);
 		redo = false;

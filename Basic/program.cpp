@@ -40,7 +40,7 @@ bool correctLine(string line, string order) {
 		return judgeExp(tempexp);
 	}
 	if (order == "INPUT") {
-		if (correctName(line)) error("SYNTAX ERROR");
+		if (!correctName(scanner.nextToken())) error("SYNTAX ERROR5");
 		return !scanner.hasMoreTokens();
 	}
 	if (order == "PRINT") {
@@ -51,7 +51,7 @@ bool correctLine(string line, string order) {
 		return !scanner.hasMoreTokens();
 	if (order == "GOTO") {
 		order = scanner.nextToken();
-		if (stringToInteger(order) < 0) error("SYNTAX ERROR");
+		if (stringToInteger(order) < 0) error("SYNTAX ERROR6");
 		return !scanner.hasMoreTokens();
 	}
 	if (order == "IF") {
@@ -63,10 +63,11 @@ bool correctLine(string line, string order) {
 			if ((order == "<") || (order == ">") || (order == "=")) break;
 			leftexp = leftexp + ' ' + order;
 		}
-		if (!((order == "<") || (order == ">") || (order == "="))) error("SYNTAX ERROR");
+		if (!((order == "<") || (order == ">") || (order == "="))) error("SYNTAX ERROR7");
 		tempSc.setInput(leftexp);
 		Expression *tempexp = parseExp(tempSc);
-		if (!judgeExp(tempexp)) error("SYNTAX ERROR");
+		if (!judgeExp(tempexp)) error("SYNTAX ERROR8");
+		delete tempexp;
 
 		leftexp.clear();
 		while (scanner.hasMoreTokens()) {
@@ -74,15 +75,18 @@ bool correctLine(string line, string order) {
 			if ((order == "THEN")) break;
 			leftexp = leftexp + ' ' + order;
 		}
-		if (!(order == "THEN")) error("SYNTAX ERROR");
+		if (!(order == "THEN")) error("SYNTAX ERROR9");
 		tempSc.setInput(leftexp);
 		tempexp = parseExp(tempSc);
-		if (!judgeExp(tempexp)) error("SYNTAX ERROR");
+		if (!judgeExp(tempexp)) error("SYNTAX ERRORA");
+		delete tempexp;
 
 		order = scanner.nextToken();
-		if (scanner.getTokenType(order) != NUMBER) error("SYNTAX ERROR");
+		if (scanner.getTokenType(order) != NUMBER) error("SYNTAX ERRORB");
 		return (stringToInteger(order) >= 0);
 	}
+	error("SYNTAX ERRORX");
+	return false;
 }
 
 void Program::addSourceLine(int lineNumber, string li) {
@@ -96,7 +100,7 @@ void Program::addSourceLine(int lineNumber, string li) {
 	string line = scanner.nextToken();
 	while (scanner.hasMoreTokens())
 		line = line + ' ' + scanner.nextToken();     //AFTER THIS, THE LINE IS PURE
-	if (!correctLine(line, order)) error("SYNTAX ERROR");
+	if (!correctLine(line, order)) error("SYNTAX ERRORC");
 
 	if (s.count(lineNumber)) s.erase(lineNumber);
 	if (order == "REM")
@@ -174,17 +178,19 @@ bool correctName(string nam) {
 	for (auto i : nam)
 		if (!((i >= '0'&& i <= '9') || (i >= 'a' && i <= 'z') ||
 			(i >= 'A' && i <= 'Z'))) return false;
-	return ((nam == "RUN") || (nam == "LIST") || (nam == "CLEAR") ||
+	return (!((nam == "RUN") || (nam == "LIST") || (nam == "CLEAR") ||
 		(nam == "QUIT") || (nam == "HELP") || (nam == "LET") || (nam == "REM") ||
 		(nam == "PRINT") || (nam == "INPUT") || (nam == "END") || (nam == "IF") ||
-		(nam == "THEN") || (nam == "GOTO"));
+		(nam == "THEN") || (nam == "GOTO")));
 }
 
 bool judgeExp(Expression* exp) {
-	if (exp->getType() == CONSTANT) return true;
-	if (exp->getType() == IDENTIFIER) return correctName(exp->toString());
+	if (exp->getType() == CONSTANT) 
+		return true;
+	if (exp->getType() == IDENTIFIER) 
+		return correctName(exp->toString());
 	if (exp->getType() == COMPOUND) {
-		if (!judgeExp(((CompoundExp *)exp)->getLHS())) return true;
+		if (!judgeExp(((CompoundExp *)exp)->getLHS())) return false;
 		return judgeExp(((CompoundExp *)exp)->getRHS());
 	}
 }
