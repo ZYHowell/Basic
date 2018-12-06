@@ -15,28 +15,28 @@ using namespace std;
 /* Implementation of the EvalState class */
 
 EvalState::EvalState() {
-   /* Empty */
+	/* Empty */
 }
 
 EvalState::~EvalState() {
-   /* Empty */
+	/* Empty */
 }
 
 void EvalState::setValue(string var, int value) {
-   symbolTable[var] = value;
+	symbolTable[var] = value;
 }
 
 int EvalState::getValue(string var) {
-   return symbolTable[var];
+	return symbolTable[var];
 }
 
 bool EvalState::isDefined(string var) {
-   return symbolTable.count(var);
+	return symbolTable.count(var);
 }
 
-void EvalState::clear(){
-   for (auto i : symbolTable){
-      symbolTable.erase(i.first);
-   }
+void EvalState::clear() {
+	for (auto i : symbolTable) {
+		symbolTable.erase(i.first);
+	}
 }
 

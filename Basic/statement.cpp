@@ -8,135 +8,142 @@
  */
 
 #include <string>
-#include "parser.cpp"
+#include "parser.h"
 #include "statement.h"
 #include "../StanfordCPPLib/tokenscanner.h"
+#include "../StanfordCPPLib/error.h"
+#include "../StanfordCPPLib/strlib.h"
 using namespace std;
 
 /* Implementation of the Statement class */
 
-Statement::Statement() {
-   /* Empty */
+Statement::Statement(string text,string li): t(text), origin(li) {
 }
 
 Statement::~Statement() {
-   /* Empty */
+	/* Empty */
 }
-Comment::Comment(string text,string li):t(text),origin(li){}
+Comment::Comment(string text, string li) :Statement(text,li){}
 
-int Comment::execute(EvalState & state){
-   return -2;
-}
-
-Comment::~Comment(){}
-
-Assignment::Assignment(string text,string li):t(text),origin(li){}
-
-int Assignment::execute(EvalState & state){
-   TokenScanner scanner;
-   scanner.ignoreWhitespace();
-   scanner.scanNumbers();
-   scanner.setInput(t);
-   try{
-      parseExp(scanner)->eval(state);
-   } catch (ErrorException & ex){
-      error(ex.getMessage());
-   }
-   return -2;
+int Comment::execute(EvalState & state) {
+	return -2;
 }
 
-Assignment::~Assignment(){}
+Comment::~Comment() {}
 
-Print::Print(string text,string li):t(text),origin(li){}
+Assignment::Assignment(string text, string li) :Statement(text, li) {}
 
-int Print::execute(EvalState & state){
-   TokenScanner scanner;
-   scanner.ignoreWhitespace();
-   scanner.scanNumbers();
-   scanner.setInput(t);
-   try{
-      printf("%d\n",parseExp(scanner)->eval(state));
-   } catch (ErrorException & ex){
-      error(ex.getMessage());
-   }
-   return -2;
-}
-Print::~Print(){}
-
-Input::Input(string text,string li):t(text),origin(li){}
-
-int Input::execute(EvalState & state){
-   TokenScanner scanner;
-   int temp;
-   printf(" ? ");
-   string tt;bool redo = true;
-   while (redo)
-      try{
-         scanf("%s",tt);
-         temp = stringToInteger(tt);
-         redo = false;
-      } catch(ErrorException & ex){
-         printf("INVALID NUMBER\n");
-         redo = true;
-      }
-   state.setValue(t,temp);
-   return -2;
+int Assignment::execute(EvalState & state) {
+	TokenScanner scanner;
+	scanner.ignoreWhitespace();
+	scanner.scanNumbers();
+	scanner.setInput(t);
+	try {
+		parseExp(scanner)->eval(state);
+	}
+	catch (ErrorException & ex) {
+		error(ex.getMessage());
+	}
+	return -2;
 }
 
-Input::~Input(){}
+Assignment::~Assignment() {}
 
-Halt::Halt(string text,string li):t(text),origin(li){}
+Print::Print(string text, string li) :Statement(text, li) {}
 
-int Halt::execute(EvalState & state){
-   return -1;
+int Print::execute(EvalState & state) {
+	TokenScanner scanner;
+	scanner.ignoreWhitespace();
+	scanner.scanNumbers();
+	scanner.setInput(t);
+	try {
+		printf("%d\n", parseExp(scanner)->eval(state));
+	}
+	catch (ErrorException & ex) {
+		error(ex.getMessage());
+	}
+	return -2;
+}
+Print::~Print() {}
+
+Input::Input(string text, string li) :Statement(text, li) {}
+
+int Input::execute(EvalState & state) {
+	TokenScanner scanner;
+	int temp;
+	printf(" ? ");
+	string tt;bool redo = true;
+	while (redo)
+		try {
+		cin>>tt;
+		temp = stringToInteger(tt);
+		redo = false;
+	}
+	catch (ErrorException & ex) {
+		printf("INVALID NUMBER\n");
+		redo = true;
+	}
+	state.setValue(t, temp);
+	return -2;
 }
 
-Halt::~Halt(){}
+Input::~Input() {}
 
-Goto::Goto(string text,string li):t(text),origin(li){}
+Halt::Halt(string text, string li) :Statement(text, li) {}
 
-int Goto::execute(EvalState & state){
-   return stringToInteger(t);
+int Halt::execute(EvalState & state) {
+	return -1;
 }
 
-Goto::~Goto(){}
+Halt::~Halt() {}
 
-Judge::Judge(string text,string li):t(text),origin(li){
-   TokenScanner scanner;scanner.scanNumbers();scanner.ignoreWhitespace();scanner.setInput(text);
-   string leftexp;leftexp.clear();
-   TokenScanner tempSc;tempSc.ignoreWhitespace();tempSc.scanNumbers();
+Goto::Goto(string text, string li) :Statement(text, li) {}
 
-   while (scanner.hasMoreTokens()){
-      temp = scanner.nextToken();
-      if ((temp == "<")||(temp == ">")||(temp == "=")) break;
-      leftexp = leftexp + ' ' + temp;
-   }
-   tempSc.setInput(leftexp);
-   lhs = parseExp(tempSc);
-
-   op = temp;
-      
-   lefttemp = scanner.nextToken();
-   while (scanner.hasMoreTokens()){
-      temp = scanner.nextToken();
-      if ((temp == "THEN")) break;
-      leftexp = leftexp + ' ' + temp;
-   }
-   tempSc.setInput(leftexp);
-   rhs = parseExp(tempSc);
-
-   temp = scanner.nextToken();
-   tol = stringToInteger(temp);
+int Goto::execute(EvalState & state) {
+	return stringToInteger(t);
 }
 
-int Judge::execute(EvalState & state){
-   if (op == "=" && (lhs->eval(state) == rhs->eval(state))) return tol;
-   if (op == ">" && (lhs->eval(state) >  rhs->eval(state))) return tol;
-   if (op == "<" && (lhs->eval(state) <  rhs->eval(state))) return tol;
-   return -2;
+Goto::~Goto() {}
+
+Judge::Judge(string text, string li) :Statement(text, li) {
+	TokenScanner scanner;scanner.scanNumbers();scanner.ignoreWhitespace();scanner.setInput(text);
+	string leftexp,temp;
+	leftexp.clear();
+	TokenScanner tempSc;
+	tempSc.ignoreWhitespace();
+	tempSc.scanNumbers();
+
+	while (scanner.hasMoreTokens()) {
+		temp = scanner.nextToken();
+		if ((temp == "<") || (temp == ">") || (temp == "=")) break;
+		leftexp = leftexp + ' ' + temp;
+	}
+	tempSc.setInput(leftexp);
+	lhs = parseExp(tempSc);
+
+	op = temp;
+
+	leftexp = scanner.nextToken();
+	while (scanner.hasMoreTokens()) {
+		temp = scanner.nextToken();
+		if ((temp == "THEN")) break;
+		leftexp = leftexp + ' ' + temp;
+	}
+	tempSc.setInput(leftexp);
+	rhs = parseExp(tempSc);
+
+	temp = scanner.nextToken();
+	tol = stringToInteger(temp);
 }
 
-Judge::~Judge(){
-   delete lhs;
-   delete rhs;
+int Judge::execute(EvalState & state) {
+	if (op == "=" && (lhs->eval(state) == rhs->eval(state))) return tol;
+	if (op == ">" && (lhs->eval(state) > rhs->eval(state))) return tol;
+	if (op == "<" && (lhs->eval(state) < rhs->eval(state))) return tol;
+	return -2;
+}
+
+Judge::~Judge() {
+	delete lhs;
+	delete rhs;
 }

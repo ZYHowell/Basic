@@ -15,57 +15,57 @@
 #include "evalstate.h"
 #include "exp.h"
 
-/*
- * Class: Statement
- * ----------------
- * This class is used to represent a statement in a program.
- * The model for this class is Expression in the exp.h interface.
- * Like Expression, Statement is an abstract class with subclasses
- * for each of the statement and command types required for the
- * BASIC interpreter.
- */
+ /*
+  * Class: Statement
+  * ----------------
+  * This class is used to represent a statement in a program.
+  * The model for this class is Expression in the exp.h interface.
+  * Like Expression, Statement is an abstract class with subclasses
+  * for each of the statement and command types required for the
+  * BASIC interpreter.
+  */
 
 class Statement {
 
 public:
 
-/*
- * Constructor: Statement
- * ----------------------
- * The base class constructor is empty.  Each subclass must provide
- * its own constructor.
- */
+	/*
+	 * Constructor: Statement
+	 * ----------------------
+	 * The base class constructor is empty.  Each subclass must provide
+	 * its own constructor.
+	 */
 
-  Statement() = default;
-  Statement(std::string text,std::string li);
+	Statement() = default;
+	Statement(std::string text, std::string li);
 
-/*
- * Destructor: ~Statement
- * Usage: delete stmt;
- * -------------------
- * The destructor deallocates the storage for this expression.
- * It must be declared virtual to ensure that the correct subclass
- * destructor is called when deleting a statement.
- */
+	/*
+	 * Destructor: ~Statement
+	 * Usage: delete stmt;
+	 * -------------------
+	 * The destructor deallocates the storage for this expression.
+	 * It must be declared virtual to ensure that the correct subclass
+	 * destructor is called when deleting a statement.
+	 */
 
-   virtual ~Statement();
+	virtual ~Statement();
 
-/*
- * Method: execute
- * Usage: stmt->execute(state);
- * ----------------------------
- * This method executes a BASIC statement.  Each of the subclasses
- * defines its own execute method that implements the necessary
- * operations.  As was true for the expression evaluator, this
- * method takes an EvalState object for looking up variables or
- * controlling the operation of the interpreter.
- */
+	/*
+	 * Method: execute
+	 * Usage: stmt->execute(state);
+	 * ----------------------------
+	 * This method executes a BASIC statement.  Each of the subclasses
+	 * defines its own execute method that implements the necessary
+	 * operations.  As was true for the expression evaluator, this
+	 * method takes an EvalState object for looking up variables or
+	 * controlling the operation of the interpreter.
+	 */
 
-   virtual int execute(EvalState & state) = 0;
+	virtual int execute(EvalState & state) = 0;
 
 public:
-  std::string t; 
-  std::string origin;
+	std::string t;
+	std::string origin;
 };
 
 /*
@@ -78,52 +78,52 @@ public:
  * an Expression object), the class implementation must also
  * specify its own destructor method to free that memory.
  */
-class Comment: public Statement{
+class Comment : public Statement {
 public:
-  Comment(std::string text,std::string li);
-  virtual int execute(EvalState & state);
-  virtual ~Comment();
+	Comment(std::string text, std::string li);
+	virtual int execute(EvalState & state);
+	virtual ~Comment();
 };
-class Assignment: public Statement{
+class Assignment : public Statement {
 public:
-  Assignment(std::string text,std::string li);
-  virtual int execute(EvalState & state);
-  virtual ~Assignment();
+	Assignment(std::string text, std::string li);
+	virtual int execute(EvalState & state);
+	virtual ~Assignment();
 };
-class Print: public Statement{
+class Print : public Statement {
 public:
-  Print(std::string text,std::string li);
-  virtual int execute(EvalState & state);
-  virtual ~Print();
+	Print(std::string text, std::string li);
+	virtual int execute(EvalState & state);
+	virtual ~Print();
 };
-class Input: public Statement{
+class Input : public Statement {
 public:
-  Input(std::string text,std::string li);
-  virtual int execute(EvalState & state);
-  virtual ~Input();
+	Input(std::string text, std::string li);
+	virtual int execute(EvalState & state);
+	virtual ~Input();
 };
-class Halt: public Statement{
+class Halt : public Statement {
 public:
-  Halt(std::string text,std::string li);
-  virtual int execute(EvalState & state);
-  virtual ~Halt();
+	Halt(std::string text, std::string li);
+	virtual int execute(EvalState & state);
+	virtual ~Halt();
 };
-class Goto: public Statement{
+class Goto : public Statement {
 public:
-  Goto(std::string text,std::string li);
-  virtual int execute(EvalState & state);
-  virtual ~Goto();
+	Goto(std::string text, std::string li);
+	virtual int execute(EvalState & state);
+	virtual ~Goto();
 };
-class Judge: public Statement{
+class Judge : public Statement {
 private:
-  Expression *lhs;
-  Expression *rhs;
-  string op;
-  int tol;
+	Expression *lhs;
+	Expression *rhs;
+	std::string op;
+	int tol;
 public:
-  Judge(std::string text,std::string li);
-  virtual int execute(EvalState & state);
-  virtual ~Judge();
+	Judge(std::string text, std::string li);
+	virtual int execute(EvalState & state);
+	virtual ~Judge();
 };
 
 #endif

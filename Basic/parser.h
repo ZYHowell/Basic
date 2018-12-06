@@ -12,14 +12,14 @@
 
 #include "../StanfordCPPLib/tokenscanner.h"
 
-/*
- * Function: parseExp
- * Usage: Expression *exp = parseExp(scanner);
- * -------------------------------------------
- * Parses an expression by reading tokens from the scanner, which must
- * be provided by the client.  The scanner should be set to ignore
- * whitespace and to scan numbers.
- */
+ /*
+  * Function: parseExp
+  * Usage: Expression *exp = parseExp(scanner);
+  * -------------------------------------------
+  * Parses an expression by reading tokens from the scanner, which must
+  * be provided by the client.  The scanner should be set to ignore
+  * whitespace and to scan numbers.
+  */
 
 Expression *parseExp(TokenScanner & scanner);
 

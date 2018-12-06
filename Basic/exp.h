@@ -11,12 +11,12 @@
 
 #include "evalstate.h"
 
-/*
- * Type: ExpressionType
- * --------------------
- * This enumerated type is used to differentiate the three different
- * expression types: CONSTANT, IDENTIFIER, and COMPOUND.
- */
+ /*
+  * Type: ExpressionType
+  * --------------------
+  * This enumerated type is used to differentiate the three different
+  * expression types: CONSTANT, IDENTIFIER, and COMPOUND.
+  */
 
 enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND };
 
@@ -47,54 +47,54 @@ class Expression {
 
 public:
 
-/*
- * Constructor: Expression
- * -----------------------
- * The base class constructor is empty.  Each subclass must provide
- * its own constructor.
- */
+	/*
+	 * Constructor: Expression
+	 * -----------------------
+	 * The base class constructor is empty.  Each subclass must provide
+	 * its own constructor.
+	 */
 
-   Expression();
+	Expression();
 
-/*
- * Destructor: ~Expression
- * Usage: delete exp;
- * ------------------
- * The destructor deallocates the storage for this expression.
- * It must be declared virtual to ensure that the correct subclass
- * destructor is called when deleting an expression.
- */
+	/*
+	 * Destructor: ~Expression
+	 * Usage: delete exp;
+	 * ------------------
+	 * The destructor deallocates the storage for this expression.
+	 * It must be declared virtual to ensure that the correct subclass
+	 * destructor is called when deleting an expression.
+	 */
 
-   virtual ~Expression();
+	virtual ~Expression();
 
-/*
- * Method: eval
- * Usage: int value = exp->eval(state);
- * ------------------------------------
- * Evaluates this expression and returns its value in the context of
- * the specified EvalState object.
- */
+	/*
+	 * Method: eval
+	 * Usage: int value = exp->eval(state);
+	 * ------------------------------------
+	 * Evaluates this expression and returns its value in the context of
+	 * the specified EvalState object.
+	 */
 
-   virtual int eval(EvalState & state) = 0;
+	virtual int eval(EvalState & state) = 0;
 
-/*
- * Method: toString
- * Usage: string str = exp->toString();
- * ------------------------------------
- * Returns a string representation of this expression.
- */
+	/*
+	 * Method: toString
+	 * Usage: string str = exp->toString();
+	 * ------------------------------------
+	 * Returns a string representation of this expression.
+	 */
 
-   virtual std::string toString() = 0;
+	virtual std::string toString() = 0;
 
-/*
- * Method: type
- * Usage: ExpressionType type = exp->getType();
- * --------------------------------------------
- * Returns the type of the expression, which must be one of the constants
- * CONSTANT, IDENTIFIER, or COMPOUND.
- */
+	/*
+	 * Method: type
+	 * Usage: ExpressionType type = exp->getType();
+	 * --------------------------------------------
+	 * Returns the type of the expression, which must be one of the constants
+	 * CONSTANT, IDENTIFIER, or COMPOUND.
+	 */
 
-   virtual ExpressionType getType() = 0;
+	virtual ExpressionType getType() = 0;
 
 };
 
@@ -104,44 +104,44 @@ public:
  * This subclass represents a constant integer expression.
  */
 
-class ConstantExp: public Expression {
+class ConstantExp : public Expression {
 
 public:
 
-/*
- * Constructor: ConstantExp
- * Usage: Expression *exp = new ConstantExp(value);
- * ------------------------------------------------
- * The constructor initializes a new integer constant expression
- * to the given value.
- */
+	/*
+	 * Constructor: ConstantExp
+	 * Usage: Expression *exp = new ConstantExp(value);
+	 * ------------------------------------------------
+	 * The constructor initializes a new integer constant expression
+	 * to the given value.
+	 */
 
-   ConstantExp(int value);
+	ConstantExp(int value);
 
-/*
- * Prototypes for the virtual methods
- * ----------------------------------
- * These methods have the same prototypes as those in the Expression
- * base class and don't require additional documentation.
- */
+	/*
+	 * Prototypes for the virtual methods
+	 * ----------------------------------
+	 * These methods have the same prototypes as those in the Expression
+	 * base class and don't require additional documentation.
+	 */
 
-   virtual int eval(EvalState & state);
-   virtual std::string toString();
-   virtual ExpressionType getType();
+	virtual int eval(EvalState & state);
+	virtual std::string toString();
+	virtual ExpressionType getType();
 
-/*
- * Method: getValue
- * Usage: int value = ((ConstantExp *) exp)->getValue();
- * -----------------------------------------------------
- * Returns the value field without calling eval and can be applied
- * only to an object known to be a ConstantExp.
- */
+	/*
+	 * Method: getValue
+	 * Usage: int value = ((ConstantExp *) exp)->getValue();
+	 * -----------------------------------------------------
+	 * Returns the value field without calling eval and can be applied
+	 * only to an object known to be a ConstantExp.
+	 */
 
-   int getValue();
+	int getValue();
 
 private:
 
-   int value;
+	int value;
 
 };
 
@@ -155,40 +155,40 @@ class IdentifierExp : public Expression {
 
 public:
 
-/*
- * Constructor: IdentifierExp
- * Usage: Expression *exp = new IdentifierExp(name);
- * -------------------------------------------------
- * The constructor initializes a new identifier expression
- * for the variable named by name.
- */
+	/*
+	 * Constructor: IdentifierExp
+	 * Usage: Expression *exp = new IdentifierExp(name);
+	 * -------------------------------------------------
+	 * The constructor initializes a new identifier expression
+	 * for the variable named by name.
+	 */
 
-   IdentifierExp(std::string name);
+	IdentifierExp(std::string name);
 
-/*
- * Prototypes for the virtual methods
- * ----------------------------------
- * These methods have the same prototypes as those in the Expression
- * base class and don't require additional documentation.
- */
+	/*
+	 * Prototypes for the virtual methods
+	 * ----------------------------------
+	 * These methods have the same prototypes as those in the Expression
+	 * base class and don't require additional documentation.
+	 */
 
-   virtual int eval(EvalState & state);
-   virtual std::string toString();
-   virtual ExpressionType getType();
+	virtual int eval(EvalState & state);
+	virtual std::string toString();
+	virtual ExpressionType getType();
 
-/*
- * Method: getName
- * Usage: string name = ((IdentifierExp *) exp)->getName();
- * --------------------------------------------------------
- * Returns the name field of the identifier node and can be applied only
- * to an object known to be an IdentifierExp.
- */
+	/*
+	 * Method: getName
+	 * Usage: string name = ((IdentifierExp *) exp)->getName();
+	 * --------------------------------------------------------
+	 * Returns the name field of the identifier node and can be applied only
+	 * to an object known to be an IdentifierExp.
+	 */
 
-   std::string getName();
+	std::string getName();
 
 private:
 
-   std::string name;
+	std::string name;
 
 };
 
@@ -199,51 +199,51 @@ private:
  * two subexpressions joined by an operator.
  */
 
-class CompoundExp: public Expression {
+class CompoundExp : public Expression {
 
 public:
 
-/*
- * Constructor: CompoundExp
- * Usage: Expression *exp = new CompoundExp(op, lhs, rhs);
- * -------------------------------------------------------
- * The constructor initializes a new compound expression
- * which is composed of the operator (op) and the left and
- * right subexpression (lhs and rhs).
- */
+	/*
+	 * Constructor: CompoundExp
+	 * Usage: Expression *exp = new CompoundExp(op, lhs, rhs);
+	 * -------------------------------------------------------
+	 * The constructor initializes a new compound expression
+	 * which is composed of the operator (op) and the left and
+	 * right subexpression (lhs and rhs).
+	 */
 
-   CompoundExp(std::string op, Expression *lhs, Expression *rhs);
+	CompoundExp(std::string op, Expression *lhs, Expression *rhs);
 
-/*
- * Prototypes for the virtual methods
- * ----------------------------------
- * These methods have the same prototypes as those in the Expression
- * base class and don't require additional documentation.
- */
+	/*
+	 * Prototypes for the virtual methods
+	 * ----------------------------------
+	 * These methods have the same prototypes as those in the Expression
+	 * base class and don't require additional documentation.
+	 */
 
-   virtual ~CompoundExp();
-   virtual int eval(EvalState & state);
-   virtual std::string toString();
-   virtual ExpressionType getType();
+	virtual ~CompoundExp();
+	virtual int eval(EvalState & state);
+	virtual std::string toString();
+	virtual ExpressionType getType();
 
-/*
- * Methods: getOp, getLHS, getRHS
- * Usage: string op = ((CompoundExp *) exp)->getOp();
- *        Expression *lhs = ((CompoundExp *) exp)->getLHS();
- *        Expression *rhs = ((CompoundExp *) exp)->getRHS();
- * ---------------------------------------------------------
- * These methods return the components of a compound node and can
- * be applied only to an object known to be a CompoundExp.
- */
+	/*
+	 * Methods: getOp, getLHS, getRHS
+	 * Usage: string op = ((CompoundExp *) exp)->getOp();
+	 *        Expression *lhs = ((CompoundExp *) exp)->getLHS();
+	 *        Expression *rhs = ((CompoundExp *) exp)->getRHS();
+	 * ---------------------------------------------------------
+	 * These methods return the components of a compound node and can
+	 * be applied only to an object known to be a CompoundExp.
+	 */
 
-   std::string getOp();
-   Expression *getLHS();
-   Expression *getRHS();
+	std::string getOp();
+	Expression *getLHS();
+	Expression *getRHS();
 
 private:
 
-   std::string op;
-   Expression *lhs, *rhs;
+	std::string op;
+	Expression *lhs, *rhs;
 
 };
 

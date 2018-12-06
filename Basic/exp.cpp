@@ -20,11 +20,11 @@ using namespace std;
  */
 
 Expression::Expression() {
-   /* Empty */
+	/* Empty */
 }
 
 Expression::~Expression() {
-   /* Empty */
+	/* Empty */
 }
 
 /*
@@ -36,23 +36,23 @@ Expression::~Expression() {
  */
 
 ConstantExp::ConstantExp(int value) {
-   this->value = value;
+	this->value = value;
 }
 
 int ConstantExp::eval(EvalState & state) {
-   return value;
+	return value;
 }
 
 string ConstantExp::toString() {
-   return integerToString(value);
+	return integerToString(value);
 }
 
 ExpressionType ConstantExp::getType() {
-   return CONSTANT;
+	return CONSTANT;
 }
 
 int ConstantExp::getValue() {
-   return value;
+	return value;
 }
 
 /*
@@ -64,44 +64,44 @@ int ConstantExp::getValue() {
  */
 
 IdentifierExp::IdentifierExp(string name) {
-   this->name = name;
+	this->name = name;
 }
 
 int IdentifierExp::eval(EvalState & state) {
-   if (!state.isDefined(name)) error("VARIABLE NOT DEFINED");
-   return state.getValue(name);
+	if (!state.isDefined(name)) error("VARIABLE NOT DEFINED");
+	return state.getValue(name);
 }
 
 string IdentifierExp::toString() {
-   return name;
+	return name;
 }
 
 ExpressionType IdentifierExp::getType() {
-   return IDENTIFIER;
+	return IDENTIFIER;
 }
 
 string IdentifierExp::getName() {
-   return name;
+	return name;
 }
 
 /*
  * Implementation notes: the CompoundExp subclass
  * ----------------------------------------------
  * The CompoundExp subclass declares instance variables for the operator
- * and the left and right subexpressions.  The implementation of eval 
+ * and the left and right subexpressions.  The implementation of eval
  * evaluates the subexpressions recursively and then applies the operator.
  */
 
 CompoundExp::CompoundExp(string op, Expression *lhs, Expression *rhs) {
-   this->op = op;
-   this->lhs = lhs;
-   this->rhs = rhs;
+	this->op = op;
+	this->lhs = lhs;
+	this->rhs = rhs;
 }
 
 //CAUTION:memory leak there.
 CompoundExp::~CompoundExp() {
-   delete lhs;
-   delete rhs;
+	delete lhs;
+	delete rhs;
 }
 
 /*
@@ -113,49 +113,49 @@ CompoundExp::~CompoundExp() {
  */
 
 int CompoundExp::eval(EvalState & state) {
-   if (op == "=") {
-      if (lhs->getType() != IDENTIFIER) {
-         error("SYNTAX ERROR");
-      }
-      int val = rhs->eval(state);
-      state.setValue(((IdentifierExp *) lhs)->getName(), val);
-      return val;
-   }
-   int left;
-   int right;
-   try{
-      left = lhs->eval(state);
-      right = rhs->eval(state);
-   }
-   catch(ErrorException & ex){
-      error(ex.getMessage());
-   }
-   if (op == "+") return left + right;
-   if (op == "-") return left - right;
-   if (op == "*") return left * right;
-   if (op == "/")
-      if (right == 0) error("DIVIDE BY ZERO");
-      else return left / right;
-   error("SYNTAX ERROR");
-   return 0;
+	if (op == "=") {
+		if (lhs->getType() != IDENTIFIER) {
+			error("SYNTAX ERROR");
+		}
+		int val = rhs->eval(state);
+		state.setValue(((IdentifierExp *)lhs)->getName(), val);
+		return val;
+	}
+	int left;
+	int right;
+	try {
+		left = lhs->eval(state);
+		right = rhs->eval(state);
+	}
+	catch (ErrorException & ex) {
+		error(ex.getMessage());
+	}
+	if (op == "+") return left + right;
+	if (op == "-") return left - right;
+	if (op == "*") return left * right;
+	if (op == "/")
+		if (right == 0) error("DIVIDE BY ZERO");
+		else return left / right;
+	error("SYNTAX ERROR");
+	return 0;
 }
 
 string CompoundExp::toString() {
-   return '(' + lhs->toString() + ' ' + op + ' ' + rhs->toString() + ')';
+	return '(' + lhs->toString() + ' ' + op + ' ' + rhs->toString() + ')';
 }
 
 ExpressionType CompoundExp::getType() {
-   return COMPOUND;
+	return COMPOUND;
 }
 
 string CompoundExp::getOp() {
-   return op;
+	return op;
 }
 
 Expression *CompoundExp::getLHS() {
-   return lhs;
+	return lhs;
 }
 
 Expression *CompoundExp::getRHS() {
-   return rhs;
+	return rhs;
 }
