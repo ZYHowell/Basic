@@ -23,7 +23,8 @@
         "typeinfo": "cpp",
         "bitset": "cpp",
         "cmath": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "xstring": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

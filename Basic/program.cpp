@@ -29,35 +29,75 @@ Program::~Program() {
    }
 }
 
-bool correctLine(string line){
+bool correctLine(string line,string order){
    TokenScanner scanner;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
    scanner.setInput(line);
-   string temp = scanner.nextToken();
-   if (temp == "REM") return true;
-   if (temp == "LET"){
-      CompoundExp *tempexp = parseExp(scanner);
-      judgeExp(temp)
-      return true;
+   if (order == "REM") return true;
+   if (order == "LET"){
+      Expression *tempexp = parseExp(scanner);
+      return judgeExp(tempexp);
    }
-   if ((temp == "INPUT")||(temp == "PRINT")||){
-      
-   }
-   if (temp == "END")
+   if (order == "INPUT"){
+      if (correctName(line)) error("SYNTAX ERROR");
       return !scanner.hasMoreTokens();
-   if (temp == "GOTO"){
-      temp = scanner.nextToken();
-      if (stringToInteger(temp) <= 0) error("SYNTAX ERROR");
-      return scanner.hasMoreTokens();
+   }
+   if (order == "PRINT"){
+      Expression *tempexp = parseExp(scanner);
+      return judgeExp(tempexp);
+   }
+   if (order == "END")
+      return !scanner.hasMoreTokens();
+   if (order == "GOTO"){
+      order = scanner.nextToken();
+      if (stringToInteger(temp) < 0) error("SYNTAX ERROR");
+      return !scanner.hasMoreTokens();
    }
    if (temp == "IF"){
+      string leftexp;leftexp.clear();
+      TokenScanner tempSc;tempSc.ignoreWhitespace();tempSc.scanNumbers();
 
+      while (scanner.hasMoreTokens()){
+         temp = scanner.nextToken();
+         if ((temp == "<")||(temp == ">")||(temp == "=")) break;
+         leftexp = leftexp + ' ' + temp;
+      }
+      if (!((temp == "<")||(temp == ">")||(temp == "="))) error("SYNTAX ERROR");
+      tempSc.setInput(leftexp);
+      Expression *tempexp = parseExp(tempSc);
+      if (!judgeExp(tempexp)) error("SYNTAX ERROR");
+      
+      lefttemp.clear();
+      while (scanner.hasMoreTokens()){
+         temp = scanner.nextToken();
+         if ((temp == "THEN")) break;
+         leftexp = leftexp + ' ' + temp;
+      }
+      if (!(temp == "THEN")) error("SYNTAX ERROR");
+      tempSc.setInput(leftexp);
+      Expression *tempexp = parseExp(tempSc);
+      if (!judgeExp(tempexp)) error("SYNTAX ERROR");
+
+      temp = scanner.nextToken();
+      if (scanner.getTokenType(temp) != NUMBER) error("SYNTAX ERROR");
+      return (stringToInteger(temp) >= 0)
    }
 }
 
-void Program::addSourceLine(int lineNumber, string line, string li){
-   if (!correctLine(line)) error("SYNTAX ERROR");
+void Program::addSourceLine(int lineNumber, string li){
+   TokenScanner scanner;
+   scanner.ignoreWhitespace();
+   scanner.scanNumbers();
+   scanner.setInput(li);
+   scanner.nextToken();                            //DEAL WITH LINE NUMBER
+   string order = scanner.nextToken();
+
+   string line = scanner.nextToken();
+   while (scanner.hasMoreTokens())
+      line = line + ' ' + scanner.nextToken();     //AFTER THIS, THE LINE IS PURE
+   if (!correctLine(line,order)) error("SYNTAX ERROR");
+
    if (s.count(lineNumber)) s.erase(lineNumber); 
    if (order == "REM")
       s[lineNumber] = new Comment(line,li);
@@ -99,7 +139,7 @@ int Program::getFirstLineNumber() {
 
 int Program::getNextLineNumber(int lineNumber) {
    map<int, Statement*>::iterator iter = s.find(lineNumber);
-   if (iter == s.end()) return 0;
+   if (iter == string::npos) return 0;
    iter++;
    return iter->first;
 }
@@ -121,9 +161,12 @@ void Program::run(EvalState & state){
    map<int, Statement*>::iterator iter = s.begin();
    while (iter != s.end()){
       temp = i.second->execute();
-      if (temp == 0) iter++;
+      if (temp == -2) iter++;
       else if (temp == -1) break;
-      else iter = s.find(temp);
+      else{
+         iter = s.find(temp);
+         if (iter == string::npos) error("LINE NUMBER ERROR");
+      }
    }
 }
 

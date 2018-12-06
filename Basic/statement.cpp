@@ -25,7 +25,7 @@ Statement::~Statement() {
 Comment::Comment(string text,string li):t(text),origin(li){}
 
 int Comment::execute(EvalState & state){
-   return 0;
+   return -2;
 }
 
 Comment::~Comment(){}
@@ -42,7 +42,7 @@ int Assignment::execute(EvalState & state){
    } catch (ErrorException & ex){
       error(ex.getMessage());
    }
-   return 0;
+   return -2;
 }
 
 Assignment::~Assignment(){}
@@ -59,7 +59,7 @@ int Print::execute(EvalState & state){
    } catch (ErrorException & ex){
       error(ex.getMessage());
    }
-   return 0;
+   return -2;
 }
 Print::~Print(){}
 
@@ -67,10 +67,7 @@ Input::Input(string text,string li):t(text),origin(li){}
 
 int Input::execute(EvalState & state){
    TokenScanner scanner;
-   int temp;string name;
-   scanner.ignoreWhitespace();
-   scanner.scanNumbers();
-   scanner.setInput(t);
+   int temp;
    printf(" ? ");
    string tt;bool redo = true;
    while (redo)
@@ -82,10 +79,8 @@ int Input::execute(EvalState & state){
          printf("INVALID NUMBER\n");
          redo = true;
       }
-   scanner.nextToken();
-   name = scanner.nextToken();
-   state.setValue(name,temp);
-   return 0;
+   state.setValue(t,temp);
+   return -2;
 }
 
 Input::~Input(){}
@@ -101,16 +96,47 @@ Halt::~Halt(){}
 Goto::Goto(string text,string li):t(text),origin(li){}
 
 int Goto::execute(EvalState & state){
-   return waitingtofill
+   return stringToInteger(t);
 }
 
 Goto::~Goto(){}
 
-Judge::Judge(string text,string li):t(text),origin(li){}
+Judge::Judge(string text,string li):t(text),origin(li){
+   TokenScanner scanner;scanner.scanNumbers();scanner.ignoreWhitespace();scanner.setInput(text);
+   string leftexp;leftexp.clear();
+   TokenScanner tempSc;tempSc.ignoreWhitespace();tempSc.scanNumbers();
 
-int Judge::execute(EvalState & state){
-   waitingtofill
-   return 0;
+   while (scanner.hasMoreTokens()){
+      temp = scanner.nextToken();
+      if ((temp == "<")||(temp == ">")||(temp == "=")) break;
+      leftexp = leftexp + ' ' + temp;
+   }
+   tempSc.setInput(leftexp);
+   lhs = parseExp(tempSc);
+
+   op = temp;
+      
+   lefttemp = scanner.nextToken();
+   while (scanner.hasMoreTokens()){
+      temp = scanner.nextToken();
+      if ((temp == "THEN")) break;
+      leftexp = leftexp + ' ' + temp;
+   }
+   tempSc.setInput(leftexp);
+   rhs = parseExp(tempSc);
+
+   temp = scanner.nextToken();
+   tol = stringToInteger(temp);
 }
 
-Judge::~Judge(){}
+int Judge::execute(EvalState & state){
+   if (op == "=" && (lhs->eval(state) == rhs->eval(state))) return tol;
+   if (op == ">" && (lhs->eval(state) >  rhs->eval(state))) return tol;
+   if (op == "<" && (lhs->eval(state) <  rhs->eval(state))) return tol;
+   return -2;
+}
+
+Judge::~Judge(){
+   delete lhs;
+   delete rhs;
+}

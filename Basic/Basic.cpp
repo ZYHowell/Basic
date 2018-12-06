@@ -36,12 +36,10 @@ int main() {
       }
       catch (ErrorException & ex) {
          string temp = ex.getMessage();
-         if (temp.c_str(),"stringToInteger") == NULL)
-            if ((temp == "DIVIDE BY ZERO")||(temp == "INVALID NUMBER")||
-               (temp == "VARIABLE NOT DEFINED")||(temp == "LINE NUMBER ERROR"))
-               cerr <<  temp << endl;
-            else cerr << "SYNTAX ERROR" << endl;
-         else cerr << endl;
+         if ((temp == "DIVIDE BY ZERO")||(temp == "INVALID NUMBER")||
+            (temp == "VARIABLE NOT DEFINED")||(temp == "LINE NUMBER ERROR"))
+            cerr <<  temp << endl;
+         else cerr << "SYNTAX ERROR" << endl;
       }
    }
    return 0;
@@ -66,23 +64,12 @@ void processLine(string line, Program & program, EvalState & state) {
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
    scanner.setInput(line);
-   string li = line;
    string temp = scanner.nextToken();
-   if ((temp[0] >= '0')&&(temp[0] <= '9')){
-      try{
-         ln = stringToInteger(temp);
-      } catch (ErrorException & ex){
-         error("SYNTAX ERROR");
-      }
+   if (scanner.getTokenType(temp) == NUMBER){
+      ln = stringToInteger(temp);
       try{
          if (!scanner.hasMoreTokens()) error("SYNTAX ERROR");
-         temp = scanner.nextToken();
-         line = temp;
-         while (scanner.hasMoreTokens()){
-            temp = scanner.nextToken();
-            line = line + ' ' + temp;
-         }
-         program.addSourceLine(ln , line , li);
+         program.addSourceLine(ln ,line);
       }catch (ErrorException & ex){
          error(ex.getMessage());
       }

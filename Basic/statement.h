@@ -79,36 +79,48 @@ public:
  * specify its own destructor method to free that memory.
  */
 class Comment: public Statement{
+public:
   Comment(std::string text,std::string li);
   virtual int execute(EvalState & state);
   virtual ~Comment();
 };
 class Assignment: public Statement{
+public:
   Assignment(std::string text,std::string li);
   virtual int execute(EvalState & state);
   virtual ~Assignment();
 };
 class Print: public Statement{
+public:
   Print(std::string text,std::string li);
   virtual int execute(EvalState & state);
   virtual ~Print();
 };
 class Input: public Statement{
+public:
   Input(std::string text,std::string li);
   virtual int execute(EvalState & state);
   virtual ~Input();
 };
 class Halt: public Statement{
+public:
   Halt(std::string text,std::string li);
   virtual int execute(EvalState & state);
   virtual ~Halt();
 };
 class Goto: public Statement{
+public:
   Goto(std::string text,std::string li);
   virtual int execute(EvalState & state);
   virtual ~Goto();
 };
 class Judge: public Statement{
+private:
+  Expression *lhs;
+  Expression *rhs;
+  string op;
+  int tol;
+public:
   Judge(std::string text,std::string li);
   virtual int execute(EvalState & state);
   virtual ~Judge();
