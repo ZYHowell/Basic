@@ -24,9 +24,7 @@ Program::Program() {
 }
 
 Program::~Program() {
-	for (auto i : s) {
-		delete i.second;
-	}
+  s.clear();
 }
 
 bool correctLine(string line, string order) {
@@ -148,9 +146,7 @@ int Program::getNextLineNumber(int lineNumber) {
 }
 
 void Program::clear() {
-	for (auto i : s) {
-		s.erase(i.first);
-	}
+  s.clear();
 }
 
 void Program::list() {
@@ -174,7 +170,7 @@ void Program::run(EvalState & state) {
 }
 
 bool correctName(string nam) {
-	if (nam[1] >= '0' && nam[1] <= '9') return false;
+	if (nam[0] >= '0' && nam[0] <= '9') return false;
 	for (auto i : nam)
 		if (!((i >= '0'&& i <= '9') || (i >= 'a' && i <= 'z') ||
 			(i >= 'A' && i <= 'Z'))) return false;

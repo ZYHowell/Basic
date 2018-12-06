@@ -38,8 +38,8 @@ int main() {
 			string temp = ex.getMessage();
 			if ((temp == "DIVIDE BY ZERO") || (temp == "INVALID NUMBER") ||
 				(temp == "VARIABLE NOT DEFINED") || (temp == "LINE NUMBER ERROR"))
-				cerr << temp << endl;
-			else cerr << "SYNTAX ERROR" << endl;
+				cout << temp << endl;
+			else cout << "SYNTAX ERROR" << endl;
 		}
 	}
 	return 0;
@@ -95,7 +95,7 @@ void processLine(string line, Program & program, EvalState & state) {
 		else if ((temp == "LET")|| (temp == "PRINT")|| (temp == "INPUT")) {
 			tempprogram.addSourceLine(0, "0 " + line);
 			tempprogram.run(state);
-			tempprogram.clear();
+			return;
 		}
 		else error("SYNTAX ERROR2");
 	}

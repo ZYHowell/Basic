@@ -8,11 +8,13 @@
  */
 
 #include <string>
+#include <cstring>
 #include "parser.h"
 #include "statement.h"
 #include "../StanfordCPPLib/tokenscanner.h"
 #include "../StanfordCPPLib/error.h"
 #include "../StanfordCPPLib/strlib.h"
+#include "../StanfordCPPLib/simpio.h"
 using namespace std;
 
 /* Implementation of the Statement class */
@@ -71,17 +73,24 @@ Input::Input(string text, string li) :Statement(text, li) {}
 int Input::execute(EvalState & state) {
 	TokenScanner scanner;
 	int temp;
-	string tt;bool redo = true;
-	while (redo)
-		try {
-		printf(" ? ");
-		cin>>tt;
-		temp = stringToInteger(tt);
-		redo = false;
-	}
-	catch (ErrorException & ex) {
-		printf("INVALID NUMBER\n");
-		redo = true;
+	string tt;bool flag = false;
+	while (true){
+	  try{
+	    cout << " ? ";
+	    tt = getLine();
+	    if (tt[0] == '-'){
+	      flag = true;
+	      tt = tt.substr(1,strlen(tt.c_str())-1);
+	    }
+	    if (scanner.getTokenType(tt) == NUMBER){
+	      temp = stringToInteger(tt);
+	      if (flag) temp *= -1;
+	      break;
+	    }
+	    else error("wrong type");
+	  }catch(...){
+	    cout << "INVALID NUMBER\n";
+	  }
 	}
 	state.setValue(t, temp);
 	return -2;
